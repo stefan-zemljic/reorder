@@ -6,13 +6,17 @@ import com.intellij.psi.PsiDirectory;
 import org.jetbrains.annotations.NotNull;
 
 public class ReorderDirectoryNode extends TreeNodeDelegate<PsiDirectory> {
-    private final PsiDirectoryNode n;
+    private final PsiDirectoryNode psiDirectoryNode;
     private final int weight;
 
-    protected ReorderDirectoryNode(PsiDirectoryNode n, int weight) {
-        super(n);
-        this.n = n;
+    protected ReorderDirectoryNode(PsiDirectoryNode psiDirectoryNode, int weight) {
+        super(psiDirectoryNode);
+        this.psiDirectoryNode = psiDirectoryNode;
         this.weight = weight;
+    }
+
+    public PsiDirectoryNode getPsiDirectoryNode() {
+        return psiDirectoryNode;
     }
 
     @Override
@@ -22,6 +26,6 @@ public class ReorderDirectoryNode extends TreeNodeDelegate<PsiDirectory> {
 
     @Override
     protected void update(@NotNull PresentationData presentation) {
-        n.update(presentation);
+        psiDirectoryNode.update(presentation);
     }
 }

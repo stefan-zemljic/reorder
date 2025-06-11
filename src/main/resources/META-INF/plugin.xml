@@ -1,12 +1,12 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
     <id>com.stefan_zemljic.reorder</id>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <name>Reorder ProjectView</name>
     <vendor>stefan-zemljic</vendor>
     <description>
         Reorders files and directories in the Project View according to the manually specified order in the
-        .order file.
+        .order file. Use /other, /files and /folders to specify where the other files and folders should be placed.
     </description>
     <depends>com.intellij.modules.platform</depends>
     <extensions defaultExtensionNs="com.intellij">

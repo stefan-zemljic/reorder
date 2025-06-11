@@ -8,10 +8,7 @@ import com.intellij.ide.util.treeView.AbstractTreeNode;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ReorderTreeStructureProvider implements TreeStructureProvider {
     private final static ThreadLocal<Map<String, Integer>> maps = ThreadLocal.withInitial(HashMap::new);
@@ -22,13 +19,20 @@ public class ReorderTreeStructureProvider implements TreeStructureProvider {
             @NotNull Collection<AbstractTreeNode<?>> children,
             ViewSettings settings
     ) {
-        if (parent instanceof PsiDirectoryNode n) {
-            return modify(n, children, settings);
+        switch (parent) {
+            case PsiDirectoryNode n -> {
+                return modifyDirectoryChildren(n, children, settings);
+            }
+            case ReorderDirectoryNode n -> {
+                return modifyDirectoryChildren(n.getPsiDirectoryNode(), children, settings);
+            }
+            default -> {
+                return children;
+            }
         }
-        return children;
     }
 
-    private @NotNull Collection<AbstractTreeNode<?>> modify(
+    private @NotNull Collection<AbstractTreeNode<?>> modifyDirectoryChildren(
             PsiDirectoryNode parent,
             @NotNull Collection<AbstractTreeNode<?>> children,
             ViewSettings ignoredSettings
@@ -47,22 +51,36 @@ public class ReorderTreeStructureProvider implements TreeStructureProvider {
         }
         var map = maps.get();
         map.clear();
-        map.put(".order", 1);
         new String(orderFileContent).lines().forEach(line ->
-                map.put(line.trim(), map.size() + 2)
+                map.put(line.trim(), map.size())
         );
-        System.out.println(map);
+        if (!map.containsKey(".order")) {
+            map.put(".order", map.size());
+        }
+        if (!map.containsKey("/folders")) {
+            if (map.containsKey("/other")) {
+                map.put("/folders", map.get("/other"));
+            } else {
+                map.put("/folders", map.size());
+            }
+        }
+        if (!map.containsKey("/files")) {
+            if (map.containsKey("/other")) {
+                map.put("/files", map.get("/other"));
+            } else {
+                map.put("/files", map.size());
+            }
+        }
         var orderedChildren = new ArrayList<AbstractTreeNode<?>>();
         for (var child : children) {
-            var weight = map.get(getTitle(child));
-            if (weight == null) {
-                orderedChildren.add(child);
-                continue;
-            }
-            System.out.println("Mapping " + child.getName() + " to weight " + weight);
+            var weight = Objects.requireNonNullElseGet(map.get(getTitle(child)), () -> {
+                if (child instanceof PsiDirectoryNode || child instanceof ReorderDirectoryNode) {
+                    return map.get("/folders");
+                }
+                return map.get("/files");
+            });
             orderedChildren.add(map(child, weight));
         }
-        System.out.println(children.stream().map(Object::getClass).toList());
         map.clear();
         children.clear();
         return orderedChildren;
