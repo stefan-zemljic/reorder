@@ -17,7 +17,8 @@
 - [ ] Click the <kbd>Watch</kbd> button on the top of the [IntelliJ Platform Plugin Template][template] to be notified about releases containing new features and fixes.
 
 <!-- Plugin description -->
-Reorders files and directories in the Project view according to the specified order in the .order file.
+Reorders files and directories in the Project View according to the manually specified order in the
+.order file. Use /other, /files and /folders to specify where the other files and folders should be placed.
 <!-- Plugin description end -->
 
 ## Installation

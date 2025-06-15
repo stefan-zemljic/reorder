@@ -11,10 +11,10 @@ import java.awt.*;
 import java.util.Collection;
 import java.util.Map;
 
-public abstract class TreeNodeDelegate<T> extends AbstractTreeNode<T> {
-    private final AbstractTreeNode<T> d;
+public abstract class TreeNodeDelegate extends AbstractTreeNode<Object> {
+    private final AbstractTreeNode<?> d;
 
-    public TreeNodeDelegate(@NotNull AbstractTreeNode<T> d) {
+    public TreeNodeDelegate(@NotNull AbstractTreeNode<?> d) {
         super(d.getProject(), d.getValue());
         this.d = d;
     }
